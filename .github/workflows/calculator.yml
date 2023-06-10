@@ -19,10 +19,11 @@ jobs:
           php-version: 7.4
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-      - name: Install Composer Dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
-      - name: Install NPM Dependencies
-        run: npm install
+      - run: php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+             && php composer-setup.php \
+             && php -r "unlink('composer-setup.php');" \
+             && php composer.phar install --no-ansi --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader \
+      -  run: npm install
       - name: Generate key
         run: php artisan key:generate
       - name: Execute phpunit test
